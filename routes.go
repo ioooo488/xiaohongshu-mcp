@@ -40,10 +40,10 @@ func setupRoutes(appServer *AppServer) *gin.Engine {
 	mcpHTTPHandler := http.NewCrossOriginProtection().Handler(mcpHandler)
 	protected := router.Group("")
 	protected.Use(authMiddleware(appServer.authToken))
+	protected.Use(func(c *gin.Context) { c.Request.Host = "localhost"; c.Next() })
 
 	protected.Any("/mcp", gin.WrapH(mcpHTTPHandler))
 	protected.Any("/mcp/*path", gin.WrapH(mcpHTTPHandler))
-
 	// API 路由组
 	api := protected.Group("/api/v1")
 	{
